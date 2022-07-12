@@ -17,10 +17,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainsence.cpp
+    mainsence.cpp \
+    mypushbutton.cpp
 
 HEADERS += \
-    mainsence.h
+    mainsence.h \
+    mypushbutton.h
 
 FORMS += \
     mainsence.ui

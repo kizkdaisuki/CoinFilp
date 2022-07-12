@@ -14,7 +14,7 @@ class MainSence : public QMainWindow
 public:
     MainSence(QWidget *parent = nullptr);
     ~MainSence();
-
+    void paintEvent(QPaintEvent *);
 private:
     Ui::MainSence *ui;
 };
