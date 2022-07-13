@@ -11,21 +11,7 @@ MyPushButton::MyPushButton(QString normalImg, QString pressImg){
     this->m_s_normalImgPath = normalImg;
     this->m_s_pressedImgPath = pressImg;
 
-    QPixmap pix;
-    bool flg = pix.load(this->m_s_normalImgPath);
-    if(!flg)
-    {
-        qDebug() << "图片加载失败";
-        return;
-    }
-    // 设定图片固定尺寸
-    this->setFixedSize(pix.width(), pix.height());
-    // 设定不规则图片样式表
-    this->setStyleSheet("QPushButton{border:0px;}");
-    // 设置图标
-    this->setIcon(pix);
-    //设置图标大小
-    this->setIconSize(QSize(pix.width(), pix.height()));
+    setImg(this->m_s_normalImgPath);
 
 }
 
@@ -43,5 +29,38 @@ void MyPushButton::zoom(int k){ // k == 1往上, k == 0 往下
    //开始执行动画
    animation1->start(QAbstractAnimation::DeleteWhenStopped);
 
+}
+void MyPushButton::mousePressEvent(QMouseEvent *e){
+
+    if(this->m_s_pressedImgPath != "")
+        setImg(this->m_s_pressedImgPath);
+
+
+    return QPushButton::mousePressEvent(e);
+}
+
+void MyPushButton::mouseReleaseEvent(QMouseEvent *e){
+    if(this->m_s_normalImgPath != "")
+        setImg(this->m_s_normalImgPath);
+
+    return QPushButton::mouseReleaseEvent(e);
+}
+
+void MyPushButton::setImg(QString str){
+    QPixmap pix;
+    bool flg = pix.load(str);
+    if(!flg)
+    {
+        qDebug() << "图片加载失败";
+        return;
+    }
+    // 设定图片固定尺寸
+    this->setFixedSize(pix.width(), pix.height());
+    // 设定不规则图片样式表
+    this->setStyleSheet("QPushButton{border:0px;}");
+    // 设置图标
+    this->setIcon(pix);
+    //设置图标大小
+    this->setIconSize(QSize(pix.width(), pix.height()));
 }
 

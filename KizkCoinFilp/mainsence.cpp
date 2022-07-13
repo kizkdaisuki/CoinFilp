@@ -3,7 +3,9 @@
 #include <QPainter>
 #include <QDebug>
 #include <QPushButton>
+#include <QTimer>
 #include "mypushbutton.h"
+#include "chooselevelsence.h"
 MainSence::MainSence(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainSence)
@@ -17,16 +19,28 @@ MainSence::MainSence(QWidget *parent)
     connect(ui->actionquit, &QAction::triggered, [=](){
         this->close();
     });
-    // 设置背景图片
 
     // 画开始按钮
     MyPushButton* startBtn = new MyPushButton(":/res/MenuSceneStartButton.png");
     startBtn->setParent(this);
     startBtn->move(this->width() * 0.5 - startBtn->width() * 0.5, this->height() * 0.7);
+
+    // 跳到选择关卡场景
+    m_cls = new ChooseLevelSence;
     connect(startBtn, &QPushButton::clicked, [=](){
         qDebug() << "clicked";
         startBtn->zoom(0);
         startBtn->zoom(1);
+        // 延时进入到选择关卡中
+        QTimer::singleShot(300,this,[=](){
+            this->hide();
+            m_cls->show();
+        });
+
+    });
+    connect(m_cls, &ChooseLevelSence::chooseSceneBack, [=](){
+        m_cls->hide();
+        this->show();
     });
 
 }
