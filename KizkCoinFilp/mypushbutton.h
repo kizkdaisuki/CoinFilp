@@ -11,7 +11,7 @@ public:
 //    explicit MyPushButton(QWidget *parent = nullptr);
     MyPushButton(QString normalImg, QString pressImg = "");
     // 弹跳特效
-    void zoom(int);
+    void zoom(int k, int v = 10, int s = 200);
     // 重写鼠标事件
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);

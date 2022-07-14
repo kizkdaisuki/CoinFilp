@@ -21,17 +21,24 @@ public:
     void initSence(int);
     void paintEvent(QPaintEvent *event);
     void initSenceBack();
-    bool checkOver();
+    bool checkGameOver();
+    void solve();
+    void turn(int, int);
+    template<typename T>
+        T getMin(T a, T b);
 private:
     Ui::PalySence *ui;
 signals:
     void playSenceBack();
+    void isPassed();
 public:
     int g[10][10];
+    int g1[10][10];
     int m_id;
-    Mycoin* coinBtn[4][4];
-
-
+    Mycoin* coinBtn[10][10];
+private:
+   const int Inf = 0x3f3f3f3f;
+   int m_i_minOp;
 };
 
 #endif // PALYSENCE_H

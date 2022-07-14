@@ -15,15 +15,15 @@ MyPushButton::MyPushButton(QString normalImg, QString pressImg){
 
 }
 
-void MyPushButton::zoom(int k){ // k == 1往上, k == 0 往下
+void MyPushButton::zoom(int k, int v, int s){ // k == 1往上, k == 0 往下
     //创建动画对象
    QPropertyAnimation * animation1 = new QPropertyAnimation(this,"geometry");
    //设置时间间隔，单位毫秒
-   animation1->setDuration(200);
+   animation1->setDuration(s);
    //创建起始位置
-   animation1->setStartValue(QRect(this->x(),this->y() + k * 10,this->width(),this->height()));
+   animation1->setStartValue(QRect(this->x(),this->y() + k * v,this->width(),this->height()));
    //创建结束位置
-   animation1->setEndValue(QRect(this->x(),this->y()+10 - k * 10,this->width(),this->height()));
+   animation1->setEndValue(QRect(this->x(),this->y() + v - k * v,this->width(),this->height()));
 //   设置缓和曲线，QEasingCurve::OutBounce 为弹跳效果
    animation1->setEasingCurve(QEasingCurve::OutBounce);
    //开始执行动画

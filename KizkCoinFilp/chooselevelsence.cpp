@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QLabel>
 #include <QDebug>
+#include <QFont>
+#include <QPalette>
 ChooseLevelSence::ChooseLevelSence(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ChooseLevelSence)
@@ -30,7 +32,6 @@ ChooseLevelSence::ChooseLevelSence(QWidget *parent) :
         });
 
     });
-
    // this->createButton(); // 创建20个关卡
     for(int i = 0 ; i < 20;i++)
     {
@@ -43,12 +44,25 @@ ChooseLevelSence::ChooseLevelSence(QWidget *parent) :
             this->hide();
             m_pls = new PalySence(i + 1);
             m_pls->show();
+            auto outer = this;
+            connect(m_pls, &PalySence::isPassed, [=](){
+                QLabel * label = new QLabel;
+
+                label->setParent(outer);
+                label->setFixedSize(menuBtn->width(), menuBtn->height());
+                label->setText("√");
+                label->setStyleSheet("color:green; font-size:30px; font: bold 30px;");
+                label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter); //设置居中
+                label->move(25 + (i % 4) * 70 , 130 + (i / 4) * 70);
+                label->setAttribute(Qt::WA_TransparentForMouseEvents,true);
+            });
             connect(m_pls, &PalySence::playSenceBack, [=](){
                 this->show();
                 m_pls->hide();
                 delete m_pls;
                 m_pls = NULL;
             });
+
         });
 
         //按钮上显示的文字
@@ -58,7 +72,7 @@ ChooseLevelSence::ChooseLevelSence(QWidget *parent) :
         label->setText(QString::number(i + 1));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter); //设置居中
         label->move(25 + (i % 4) * 70 , 130 + (i / 4) * 70);
-        label->setAttribute(Qt::WA_TransparentForMouseEvents,true);  //鼠标事件穿透 51号属性
+        label->setAttribute(Qt::WA_TransparentForMouseEvents,true);  //鼠标事件穿透 51号属
     }
 
 

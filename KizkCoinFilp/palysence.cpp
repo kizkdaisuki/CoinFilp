@@ -5,7 +5,8 @@
 #include <QTimer>
 #include <QDebug>
 #include <QPushButton>
-
+#include <QPropertyAnimation>
+#include <cstring>
 PalySence::PalySence(int id, QWidget *parent)  :
     QMainWindow(parent),
     ui(new Ui::PalySence)
@@ -48,6 +49,12 @@ void PalySence::initSence(int id){
     for(int i = 0; i < 4; i ++)
         for(int j = 0; j < 4; j ++)
            g[i][j] = dataMap.mData[id][i][j];
+    this->solve();
+
+    MyPushButton* successBtn = new MyPushButton(":/res/LevelCompletedDialogBg.png");
+    successBtn->setParent(this);
+    successBtn->move(this->width() * 0.5 - successBtn->width() * 0.5, 0);
+    successBtn->hide();
     for(int i = 0; i < 4; i ++)
        for(int j = 0; j < 4; j ++)
        {
@@ -60,17 +67,31 @@ void PalySence::initSence(int id){
            coinBtn->move(60 + 50 * i, 200 + 50 * j);
            coinBtn->m_flg = g[i][j];
            this->coinBtn[i][j] = coinBtn;
+
+
            connect(coinBtn, &QPushButton::clicked, [=](){
-               qDebug() << "click the coin";
+
                this->coinBtn[i][j]->changeFlg(40);
                g[i][j] ^= 1;
                for(int k = 0; k < 4; k ++)
                {
                    int a = dx[k] + i, b = dy[k] + j;
-                   if(a < 0 || b < 0 || a > 4 || b > 4)
+                   if(a < 0 || b < 0 || a >= 4 || b >= 4)
                        continue;
                    g[a][b] ^= 1;
                    this->coinBtn[a][b]->changeFlg(40);
+               }
+
+
+               if(checkGameOver())// 判断是否胜利
+               {
+                   successBtn->show();
+                   successBtn->zoom(0, 100, 1000);
+                   for(int _ = 0; _ < 4; _ ++)
+                       for(int __ = 0; __ < 4; __ ++)
+                           this->coinBtn[_][__]->m_b_isWin = true;
+                   emit this->isPassed();
+                   qDebug() << "game over";
                }
            });
        }
@@ -97,6 +118,74 @@ void PalySence::initSenceBack(){
 }
 
 
-bool PalySence::checkOver(){
+bool PalySence::checkGameOver(){
+    for(int i = 0; i < 4; i ++)
+        for(int j = 0; j < 4; j ++)
+            if(!g[i][j])
+                return false;
     return true;
 }
+
+template<typename T>
+T PalySence::getMin(T a, T b)
+{
+    return a > b ? b : a;
+}
+
+void PalySence::turn(int x, int y)
+{
+     int dx[] = {-1, 0, 1, 0, 0}, dy[] = {0, 1, 0, -1, 0};
+     for(int i = 0; i < 5; i ++)
+     {
+         int a = x + dx[i], b = y + dy[i];
+         if(a < 0 || a >= 4 || b < 0 || b >= 4)
+             continue;
+         g1[a][b] ^= 1;
+     }
+}
+
+void PalySence::solve()
+{
+    int res = Inf;
+    memcpy(g1, g, sizeof g1);
+
+    int backup[10][10];
+    for(int op = 0; op < 1 << 4; op ++)
+    {
+        int step = 0;
+        memcpy(backup, g1, sizeof backup);
+        for(int i = 0; i < 4; i ++)
+            if(op >> i & 1)
+            {
+                turn(0, i);
+                step ++ ;
+            }
+
+        for(int i = 0; i < 4 - 1; i ++)
+            for(int j = 0; j < 4; j ++)
+                if(!g1[i][j])
+                {
+                    turn(i + 1, j);
+                    step ++ ;
+                }
+        bool flg = true;
+        for(int i = 0; i < 4; i ++)
+            if(!g1[3][i])
+            {
+                flg = false;
+                break;
+            }
+        if(flg)
+            res = getMin(res, step);
+        memcpy(g1, backup, sizeof g1);
+    }
+
+    this->m_i_minOp = res;
+    qDebug() << m_i_minOp;
+}
+
+
+
+
+
+
